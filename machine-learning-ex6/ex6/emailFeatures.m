@@ -50,6 +50,9 @@ x = zeros(n, 1);
 
 
 
+for i = 1:columns(word_indices)
+  x(i, 1) = 1;
+endfor
 
 
 

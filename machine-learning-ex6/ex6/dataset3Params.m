@@ -23,9 +23,28 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+C_array = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+Sigma_array = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
 
+#first columns is C, second is Sigma, third is error
+Possible_pairs = [];
 
+for C_possible_index = 1:columns(C_array)
+  for Sigma_possible_index = 1:columns(Sigma_array)
+    C_possible = C_array(:, C_possible_index);
+    Sigma_possible = Sigma_array(:, Sigma_possible_index);
+    model = svmTrain(X, y, C_possible, @(x1, x2) gaussianKernel(x1, x2, Sigma_possible));
+    predictions = svmPredict(model, Xval);
+    error = mean(double(predictions ~= yval));
+    
+    Possible_pairs = [Possible_pairs; C_possible, Sigma_possible, error];
+  endfor
+endfor
 
+[min_error min_error_index] = min(Possible_pairs(:, 3));
+
+C = Possible_pairs(min_error_index, 1);
+sigma = Possible_pairs(min_error_index, 2);
 
 
 
